@@ -14,11 +14,13 @@ func start
 
 # terminal 2
 cd apps/web
-npm install
-npm run dev
+npm.cmd install
+npm.cmd run dev
 ```
 
 The web application starts at `http://localhost:5173` and calls the local API at `http://localhost:7071/api`. Without an AI key, the API uses safe deterministic demo suggestions.
+
+On Windows, `npm.cmd` avoids the PowerShell `npm.ps1` execution-policy error. If `func` is not recognized, install Azure Functions Core Tools v4 once with `npm.cmd install -g azure-functions-core-tools@4 --unsafe-perm true`, restart the terminal, and verify with `func --version`. You can still run all backend tests without Core Tools using `cd api; uv run pytest`.
 
 ## Structure
 
@@ -32,7 +34,7 @@ The web application starts at `http://localhost:5173` and calls the local API at
 
 ## AI configuration
 
-Copy `api/.env.example` to `api/.env` and select `groq` or `azure_foundry`. Never commit real keys. See [API setup](api/README.md).
+Copy `api/.env.example` to `api/.env` and select `groq`, `azure_foundry`, or a generic OpenAI-compatible base URL. Chat and embedding models can use separate endpoints. Never commit real keys. See [API setup](api/README.md).
 
 ## Quality gate
 

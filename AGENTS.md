@@ -15,7 +15,7 @@ Read [docs/INDEX.md](docs/INDEX.md) before substantial work. The repository is a
 ## Delivery policy
 
 - Base branch: `main`; use the `codex/` prefix for new task branches.
-- Future requested work may be committed and pushed when a remote exists and the task is verified. This repository currently has no usable remote.
+- Future requested work may be committed and pushed when a remote exists and the task is verified. The GitHub remote is recorded in the VibeRails adoption manifest.
 - Run code review only when requested. Agent delegation and model routing follow the current Codex runtime limits.
 - Run focused tests before the final commit for a requested task. CI remains required before any production delivery.
 

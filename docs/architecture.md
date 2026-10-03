@@ -9,4 +9,5 @@ Vue UI -> HTTP client -> Azure Functions routes -> application helpers -> SQLite
 - `apps/web`: routes, components, presentation state, and API client. It never imports Python or database code.
 - `api`: HTTP triggers, input validation, application helpers, SQLite repository, seeded fixtures, and an AI-provider adapter.
 - The AI adapter is selected by environment variables. It can use Groq or Azure Foundry/OpenAI-compatible endpoints and falls back to deterministic demo content.
+- Matching embeds values, relationships, communication, boundaries, interests, lifestyle, and social energy independently. Each category vector is multiplied by its configured weight, the weighted vectors are added and normalized, and candidates are ranked by cosine distance.
 - SQLite is persistent for local development. On Azure Functions it is a demo seed/cache only; a real deployment needs managed shared storage.
