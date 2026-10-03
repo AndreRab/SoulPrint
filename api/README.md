@@ -2,6 +2,8 @@
 
 Python Azure Functions API with a seeded SQLite demo repository. Dependencies are managed by `uv`.
 
+`pyproject.toml` and `uv.lock` are the local dependency source of truth. `requirements.txt` mirrors runtime dependencies because Azure Functions remote build consumes that format.
+
 ## Run locally
 
 ```powershell
@@ -10,6 +12,8 @@ Copy-Item .env.example .env
 # Create local.settings.json from local.settings.json.example when using Functions Core Tools.
 func start
 ```
+
+If `func` is not recognized on Windows, install Core Tools v4 with `npm.cmd install -g azure-functions-core-tools@4 --unsafe-perm true`, reopen PowerShell, and run `func --version`.
 
 `func start` requires Azure Functions Core Tools. The source and tests can run without it:
 
@@ -26,7 +30,13 @@ Soulprint stores values, relationship goals, communication, boundaries, interest
 
 ## AI providers
 
-Use `AI_PROVIDER=groq` with `GROQ_API_KEY`, or `AI_PROVIDER=azure_foundry` with `AZURE_FOUNDRY_ENDPOINT` and `AZURE_FOUNDRY_API_KEY`. Keys are server-only. A missing or failed provider uses curated demo suggestions so the UI always remains runnable.
+Use `AI_PROVIDER=groq` with `GROQ_API_KEY`, or `AI_PROVIDER=azure_foundry` with `AZURE_FOUNDRY_ENDPOINT` and `AZURE_FOUNDRY_API_KEY`. `AI_MODEL` selects the chat model. Generic OpenAI-compatible chat endpoints use `OPENAI_BASE_URL`, `OPENAI_API_KEY`, and `OPENAI_CHAT_MODEL`.
+
+Embeddings use `EMBEDDING_BASE_URL`, `EMBEDDING_API_KEY`, and `EMBEDDING_MODEL`. This makes it possible to use Groq for chat and a Foundry deployment for embeddings. Keys are server-only. Missing or failed providers use curated suggestions and deterministic local embeddings so the UI remains runnable.
+
+## HTTP surface
+
+The Function App exposes `/api/health`, `/api/dashboard`, `/api/profile`, `/api/soulprint`, `/api/people`, `/api/people/{id}`, `/api/people/{id}/like`, `/api/matching/{id}`, `/api/conversations/{id}`, `/api/conversations/{id}/messages`, `/api/date-ideas`, `/api/plans`, `/api/settings`, and `/api/ai/suggestions`.
 
 ## Azure Functions limitation
 

@@ -1,0 +1,4 @@
+# Azure Functions remote build reads this file. pyproject.toml and uv.lock remain the local source of truth.
+azure-functions>=1.21.3
+httpx>=0.28.1
+python-dotenv>=1.1.1
