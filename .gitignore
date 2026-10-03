@@ -1,0 +1,15 @@
+# Runtime and dependencies
+node_modules/
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# Local configuration and data
+.env
+api/.env
+api/local.settings.json
+api/data/*.db
+
+# Local inspection artifacts
+tmp/
