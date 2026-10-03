@@ -14,6 +14,7 @@ const router = createRouter({
     { path: '/assistant', component: App, meta: { screen: 'assistant' } },
     { path: '/date-plan', component: App, meta: { screen: 'date' } },
     { path: '/plans', component: App, meta: { screen: 'plans' } },
+    { path: '/plans/new', component: App, meta: { screen: 'newplan' } },
     { path: '/settings', component: App, meta: { screen: 'settings' } },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
