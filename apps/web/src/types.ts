@@ -50,6 +50,9 @@ export type SettingsModel = {
   locationSharing: boolean
   trustedContact: boolean
   emergencyShortcut: boolean
+  shareDetails?: boolean
+  visibility?: string
+  language?: string
   theme: string
 }
 

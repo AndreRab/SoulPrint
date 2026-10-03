@@ -25,7 +25,7 @@ export const demoPlans: Plan[] = [
   { id: 'upcoming', title: 'Museum & Coffee', personId: 'sophie', when: 'Saturday · 3:00 PM', place: 'Contemporary Art Museum', status: 'Planned', image: '/images/places/gallery.svg', safety: false },
 ]
 
-export const demoSettings: SettingsModel = { goal: 'Both', ageRange: [25, 40], distance: 25, messages: true, checkins: true, recommendations: false, locationSharing: false, trustedContact: true, emergencyShortcut: true, theme: 'dark' }
+export const demoSettings: SettingsModel = { goal: 'Both', ageRange: [25, 40], distance: 25, messages: true, checkins: true, recommendations: false, locationSharing: false, trustedContact: true, emergencyShortcut: true, shareDetails: true, visibility: 'Everyone', language: 'English', theme: 'dark' }
 export const demoProfile: Profile = { name: 'Maya', image: '/images/avatars/me.svg', onboardingComplete: false, answers: [], traits: ['Independent', 'Curious', 'Direct communicator', 'Long-term oriented', 'High openness'], summary: 'You value deep conversations, meaningful experiences, and personal growth.' }
 export const demoAi: AiSuggestions = { mode: 'demo', disclaimer: 'Demo suggestions are shown until an AI provider is configured.', person: 'Daniel', ideas: [
   { title: 'Italian food', body: 'You both enjoy good food. Compare favorite Italian dishes or cafés around Kreuzberg.' },
