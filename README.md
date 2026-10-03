@@ -4,7 +4,15 @@ SoulPrint is a personality-first dating experience. It pairs a Vue single-page a
 
 ## Local development
 
-Prerequisites: Node 24+, npm, Python 3.12+, [uv](https://docs.astral.sh/uv/), and Azure Functions Core Tools (only for serving the API with `func start`).
+The web app runs on browser mock data by default, so only Node is needed:
+
+```powershell
+cd apps/web
+npm.cmd install
+npm.cmd run dev
+```
+
+The backend is kept in `api/` but is not connected unless the web app is started with `VITE_USE_API=true`. To run both, you also need Python 3.12+, [uv](https://docs.astral.sh/uv/) and Azure Functions Core Tools:
 
 ```powershell
 # terminal 1
@@ -14,11 +22,10 @@ func start
 
 # terminal 2
 cd apps/web
-npm.cmd install
-npm.cmd run dev
+$env:VITE_USE_API = "true"; npm.cmd run dev
 ```
 
-The web application starts at `http://localhost:5173` and calls the local API at `http://localhost:7071/api`. Without an AI key, the API uses safe deterministic demo suggestions.
+The web application starts at `http://localhost:5173`; with the API enabled it calls `http://localhost:7071/api`. Without an AI key, the API uses safe deterministic demo suggestions.
 
 On Windows, `npm.cmd` avoids the PowerShell `npm.ps1` execution-policy error. If `func` is not recognized, install Azure Functions Core Tools v4 once with `npm.cmd install -g azure-functions-core-tools@4 --unsafe-perm true`, restart the terminal, and verify with `func --version`. You can still run all backend tests without Core Tools using `cd api; uv run pytest`.
 
