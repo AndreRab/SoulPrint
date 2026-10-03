@@ -30,26 +30,26 @@ def response(payload: object, status: int = 200) -> func.HttpResponse:
     )
 
 
-def body(request: func.HttpRequest) -> dict:
+def body(req: func.HttpRequest) -> dict:
     try:
-        payload = request.get_json()
+        payload = req.get_json()
         return payload if isinstance(payload, dict) else {}
     except ValueError:
         return {}
 
 
 @app.route(route="{*path}", methods=["OPTIONS"])
-def cors_preflight(_: func.HttpRequest) -> func.HttpResponse:
+def cors_preflight(req: func.HttpRequest) -> func.HttpResponse:
     return func.HttpResponse(status_code=204, headers=CORS_HEADERS)
 
 
 @app.route(route="health", methods=["GET"])
-def health(_: func.HttpRequest) -> func.HttpResponse:
+def health(req: func.HttpRequest) -> func.HttpResponse:
     return response({"status": "ok", "service": "soulprint-api", "storage": "sqlite-demo"})
 
 
 @app.route(route="dashboard", methods=["GET"])
-def dashboard(_: func.HttpRequest) -> func.HttpResponse:
+def dashboard(req: func.HttpRequest) -> func.HttpResponse:
     people = matching.ranked(store.records("person"))
     profile = store.record("profile", "me") or {}
     return response(
@@ -66,11 +66,11 @@ def dashboard(_: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="profile", methods=["GET", "PUT"])
-def profile(request: func.HttpRequest) -> func.HttpResponse:
+def profile(req: func.HttpRequest) -> func.HttpResponse:
     current = store.record("profile", "me") or {}
-    if request.method == "GET":
+    if req.method == "GET":
         return response(current)
-    payload = body(request)
+    payload = body(req)
     answers = payload.get("answers")
     if answers is not None and not isinstance(answers, list):
         return response({"error": "answers must be a list"}, 400)
@@ -79,11 +79,11 @@ def profile(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="soulprint", methods=["GET", "PUT"])
-def soulprint(request: func.HttpRequest) -> func.HttpResponse:
+def soulprint(req: func.HttpRequest) -> func.HttpResponse:
     current = store.record("soulprint", "me") or {"id": "me", "categories": {}}
-    if request.method == "GET":
+    if req.method == "GET":
         return response(current)
-    categories = body(request).get("categories")
+    categories = body(req).get("categories")
     if not isinstance(categories, dict):
         return response({"error": "categories must be an object"}, 400)
     allowed = set(matching.CATEGORY_WEIGHTS)
@@ -94,7 +94,7 @@ def soulprint(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="people", methods=["GET"])
-def people(_: func.HttpRequest) -> func.HttpResponse:
+def people(req: func.HttpRequest) -> func.HttpResponse:
     liked = set((store.record("likes", "me") or {}).get("personIds", []))
     return response(
         [
@@ -105,8 +105,8 @@ def people(_: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="people/{person_id}", methods=["GET"])
-def person(request: func.HttpRequest) -> func.HttpResponse:
-    person_id = request.route_params["person_id"]
+def person(req: func.HttpRequest) -> func.HttpResponse:
+    person_id = req.route_params["person_id"]
     item = store.record("person", person_id)
     if not item:
         return response({"error": "Person not found"}, 404)
@@ -116,12 +116,12 @@ def person(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="people/{person_id}/like", methods=["PUT"])
-def like_person(request: func.HttpRequest) -> func.HttpResponse:
-    person_id = request.route_params["person_id"]
+def like_person(req: func.HttpRequest) -> func.HttpResponse:
+    person_id = req.route_params["person_id"]
     if not store.record("person", person_id):
         return response({"error": "Person not found"}, 404)
     likes = store.record("likes", "me") or {"personIds": []}
-    selected = bool(body(request).get("liked", True))
+    selected = bool(body(req).get("liked", True))
     person_ids = set(likes.get("personIds", []))
     person_ids.add(person_id) if selected else person_ids.discard(person_id)
     likes["personIds"] = sorted(person_ids)
@@ -130,8 +130,8 @@ def like_person(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="matching/{person_id}", methods=["GET"])
-def matching_details(request: func.HttpRequest) -> func.HttpResponse:
-    person_id = request.route_params["person_id"]
+def matching_details(req: func.HttpRequest) -> func.HttpResponse:
+    person_id = req.route_params["person_id"]
     if not store.record("person", person_id):
         return response({"error": "Person not found"}, 404)
     return response(
@@ -144,16 +144,16 @@ def matching_details(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="conversations/{person_id}", methods=["GET"])
-def conversation(request: func.HttpRequest) -> func.HttpResponse:
-    item = store.record("conversation", request.route_params["person_id"])
+def conversation(req: func.HttpRequest) -> func.HttpResponse:
+    item = store.record("conversation", req.route_params["person_id"])
     return response(item if item else {"error": "Conversation not found"}, 200 if item else 404)
 
 
 @app.route(route="conversations/{person_id}/messages", methods=["POST"])
-def message(request: func.HttpRequest) -> func.HttpResponse:
-    person_id = request.route_params["person_id"]
+def message(req: func.HttpRequest) -> func.HttpResponse:
+    person_id = req.route_params["person_id"]
     conversation_item = store.record("conversation", person_id)
-    text = str(body(request).get("text", "")).strip()[:2000]
+    text = str(body(req).get("text", "")).strip()[:2000]
     if not conversation_item or not text:
         return response({"error": "A message is required"}, 400)
     conversation_item["messages"].append(
@@ -168,15 +168,15 @@ def message(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="date-ideas", methods=["GET"])
-def date_ideas(_: func.HttpRequest) -> func.HttpResponse:
+def date_ideas(req: func.HttpRequest) -> func.HttpResponse:
     return response(store.records("place"))
 
 
 @app.route(route="plans", methods=["GET", "POST"])
-def plans(request: func.HttpRequest) -> func.HttpResponse:
-    if request.method == "GET":
+def plans(req: func.HttpRequest) -> func.HttpResponse:
+    if req.method == "GET":
         return response(store.records("plan"))
-    payload = body(request)
+    payload = body(req)
     plan_id = f"plan-{uuid4().hex[:10]}"
     item = {
         "id": plan_id,
@@ -192,17 +192,17 @@ def plans(request: func.HttpRequest) -> func.HttpResponse:
 
 
 @app.route(route="settings", methods=["GET", "PUT"])
-def settings(request: func.HttpRequest) -> func.HttpResponse:
+def settings(req: func.HttpRequest) -> func.HttpResponse:
     current = store.record("settings", "me") or {}
-    if request.method == "GET":
+    if req.method == "GET":
         return response(current)
-    current.update(body(request))
+    current.update(body(req))
     return response(store.save("settings", "me", current))
 
 
 @app.route(route="ai/suggestions", methods=["POST"])
-def ai_suggestions(request: func.HttpRequest) -> func.HttpResponse:
-    payload = body(request)
+def ai_suggestions(req: func.HttpRequest) -> func.HttpResponse:
+    payload = body(req)
     return response(
         ai.suggestions(str(payload.get("person", "Daniel"))[:80], str(payload.get("context", "")))
     )
