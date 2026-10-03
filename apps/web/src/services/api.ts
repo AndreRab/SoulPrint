@@ -1,4 +1,5 @@
 import type { AiSuggestions, Conversation, Person, Place, Plan, Profile, SettingsModel } from '../types'
+import { mockApi } from './mockApi'
 
 const configuredBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '')
 const apiBase = configuredBase || '/api'
@@ -20,7 +21,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export const api = {
+const httpApi = {
   people: () => request<Person[]>('/people'),
   person: (id: string) => request<Person>(`/people/${encodeURIComponent(id)}`),
   like: (id: string, liked: boolean) => request<{ personId: string; liked: boolean }>(`/people/${encodeURIComponent(id)}/like`, { method: 'PUT', body: JSON.stringify({ liked }) }),
@@ -36,6 +37,10 @@ export const api = {
   saveSettings: (settings: Partial<SettingsModel>) => request<SettingsModel>('/settings', { method: 'PUT', body: JSON.stringify(settings) }),
   suggestions: (person: string, context: string) => request<AiSuggestions>('/ai/suggestions', { method: 'POST', body: JSON.stringify({ person, context }) }),
 }
+
+// The Python API is opt-in: without VITE_USE_API=true the app runs on browser mock data only.
+export const usesBackend = import.meta.env.VITE_USE_API === 'true'
+export const api: typeof httpApi = usesBackend ? httpApi : mockApi
 
 export function assetUrl(path: string): string {
   if (!path.startsWith('/') || path.startsWith('/api/')) return path
